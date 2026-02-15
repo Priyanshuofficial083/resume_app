@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Jobs - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">Resume Analyzer - Admin</a>
+            <div class="navbar-nav">
+                <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('admin_jobs') }}">Manage Jobs</a>
+                <a href="{{ url_for('admin_users') }}">Users</a>
+                <a href="{{ url_for('add_job') }}">Add Job</a>
+                <a href="{{ url_for('logout') }}" style="color: var(--danger);">Logout</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>💼 Manage Jobs</h2>
+            <a href="{{ url_for('add_job') }}" class="btn btn-success">➕ Add New Job</a>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% if jobs %}
+            {% for job in jobs %}
+                <div class="job-card">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div style="flex: 1;">
+                            <h3>{{ job.title }}</h3>
+                            <p class="company">{{ job.company }}</p>
+                            <p><strong>Location:</strong> {{ job.location }}</p>
+                            <p><strong>Salary:</strong> {{ job.salary }}</p>
+                            <p><strong>Experience:</strong> {{ job.experience_required }} years</p>
+                            <p><strong>Posted:</strong> {{ job.posted_date.strftime('%Y-%m-%d') }}</p>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            {% if job.is_active %}
+                                <span class="badge badge-success">Active</span>
+                                <button onclick="toggleJob({{ job.id }})" class="btn btn-small">Deactivate</button>
+                            {% else %}
+                                <span class="badge badge-danger">Inactive</span>
+                                <button onclick="toggleJob({{ job.id }})" class="btn btn-success btn-small">Activate</button>
+                            {% endif %}
+                            <form method="POST" action="{{ url_for('delete_job', job_id=job.id) }}" 
+                                  onsubmit="return confirm('Delete this job?');" style="margin: 0;">
+                                <button type="submit" class="btn btn-danger btn-small">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div>📭</div>
+                <p>No jobs posted yet</p>
+                <a href="{{ url_for('add_job') }}" class="btn btn-primary">Add First Job</a>
+            </div>
+        {% endif %}
+    </div>
+    
+    <script>
+        async function toggleJob(jobId) {
+            try {
+                const response = await fetch(`/admin/toggle-job/${jobId}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'}
+                });
+                
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Failed to toggle job status');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

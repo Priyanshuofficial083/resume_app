@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resume Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="hero">
+        <div class="container">
+            <h1>🎯 AI Resume Analyzer</h1>
+            <p>Upload your resume and get matched with perfect jobs!</p>
+            
+            <div style="margin-top: 30px;">
+                <a href="/register" class="btn btn-outline">Register</a>
+                <a href="/login" class="btn btn-outline">Login</a>
+                <a href="/jobs" class="btn btn-success">View Jobs</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="grid">
+            <div class="feature-box fade-in">
+                <div class="icon">📄</div>
+                <h3>Upload Resume</h3>
+                <p>Simply upload your resume in PDF or DOCX format</p>
+            </div>
+            
+            <div class="feature-box fade-in" style="animation-delay: 0.1s;">
+                <div class="icon">🤖</div>
+                <h3>AI Analysis</h3>
+                <p>Our AI extracts skills and analyzes your profile</p>
+            </div>
+            
+            <div class="feature-box fade-in" style="animation-delay: 0.2s;">
+                <div class="icon">💼</div>
+                <h3>Job Matching</h3>
+                <p>Get matched with relevant job opportunities</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

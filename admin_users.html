@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Users - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">Resume Analyzer - Admin</a>
+            <div class="navbar-nav">
+                <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('admin_jobs') }}">Manage Jobs</a>
+                <a href="{{ url_for('admin_users') }}">Users</a>
+                <a href="{{ url_for('add_job') }}">Add Job</a>
+                <a href="{{ url_for('logout') }}" style="color: var(--danger);">Logout</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>👥 All Users</h2>
+        
+        {% if users %}
+            <div class="card">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--border); text-align: left;">
+                            <th style="padding: 12px;">ID</th>
+                            <th style="padding: 12px;">Username</th>
+                            <th style="padding: 12px;">Email</th>
+                            <th style="padding: 12px;">Role</th>
+                            <th style="padding: 12px;">Resumes</th>
+                            <th style="padding: 12px;">Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 12px;">{{ user.id }}</td>
+                                <td style="padding: 12px;"><strong>{{ user.username }}</strong></td>
+                                <td style="padding: 12px;">{{ user.email or 'N/A' }}</td>
+                                <td style="padding: 12px;">
+                                    {% if user.is_admin %}
+                                        <span class="badge badge-primary">Admin</span>
+                                    {% else %}
+                                        <span class="badge">User</span>
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 12px;">{{ user.resumes|length }}</td>
+                                <td style="padding: 12px;">{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div>👥</div>
+                <p>No users registered yet</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">Resume Analyzer - Admin</a>
+            <div class="navbar-nav">
+                <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('admin_jobs') }}">Manage Jobs</a>
+                <a href="{{ url_for('admin_users') }}">Users</a>
+                <a href="{{ url_for('add_job') }}">Add Job</a>
+                <a href="{{ url_for('logout') }}" style="color: var(--danger);">Logout</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>🛡️ Admin Dashboard</h2>
+        <p class="text-muted">Welcome, {{ current_user.username }}!</p>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Statistics Cards -->
+        <div class="stats">
+            <div class="stat-box">
+                <h3>{{ stats.total_users }}</h3>
+                <p>👥 Total Users</p>
+            </div>
+            <div class="stat-box">
+                <h3>{{ stats.total_resumes }}</h3>
+                <p>📄 Resumes</p>
+            </div>
+            <div class="stat-box">
+                <h3>{{ stats.total_jobs }}</h3>
+                <p>💼 Total Jobs</p>
+            </div>
+            <div class="stat-box">
+                <h3>{{ stats.active_jobs }}</h3>
+                <p>✅ Active Jobs</p>
+            </div>
+            <div class="stat-box">
+                <h3>{{ stats.total_matches }}</h3>
+                <p>🎯 Matches</p>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="card">
+            <h3>Quick Actions</h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+                <a href="{{ url_for('add_job') }}" class="btn btn-success">➕ Add New Job</a>
+                <a href="{{ url_for('admin_jobs') }}" class="btn">📋 Manage Jobs</a>
+                <a href="{{ url_for('admin_users') }}" class="btn">👥 View Users</a>
+            </div>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class="grid">
+            <div class="card">
+                <h3>Recent Users</h3>
+                {% if recent_users %}
+                    {% for user in recent_users %}
+                        <div style="padding: 10px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
+                            <div>
+                                <strong>{{ user.username }}</strong>
+                                {% if user.is_admin %}
+                                    <span class="badge badge-primary">Admin</span>
+                                {% endif %}
+                            </div>
+                            <small class="text-muted">{{ user.created_at.strftime('%Y-%m-%d') }}</small>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No users yet</p>
+                {% endif %}
+            </div>
+            
+            <div class="card">
+                <h3>Recent Resumes</h3>
+                {% if recent_resumes %}
+                    {% for resume in recent_resumes %}
+                        <div style="padding: 10px; border-bottom: 1px solid var(--border);">
+                            <strong>{{ resume.user.username }}</strong>
+                            <br>
+                            <small class="text-muted">
+                                Score: {{ resume.score }}/100 | 
+                                {{ resume.uploaded_at.strftime('%Y-%m-%d') }}
+                            </small>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No resumes yet</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>404 - Page Not Found</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container" style="min-height: 80vh; display: flex; align-items: center; justify-content: center;">
+        <div class="card text-center">
+            <h1 style="font-size: 6rem; color: var(--danger);">404</h1>
+            <h2>Page Not Found</h2>
+            <p class="text-muted">The page you're looking for doesn't exist.</p>
+            <div style="margin-top: 30px;">
+                <a href="{{ url_for('index') }}" class="btn btn-primary">Go Home</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

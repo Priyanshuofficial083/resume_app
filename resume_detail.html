@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resume Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <div class="container">
+            <a href="/" class="navbar-brand">Resume Analyzer</a>
+            <div class="navbar-nav">
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('jobs') }}">Jobs</a>
+                <a href="{{ url_for('logout') }}" style="color: var(--danger);">Logout</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <h2>📄 Resume Analysis</h2>
+        
+        <div class="card">
+            <h3>{{ resume.original_name }}</h3>
+            
+            <div class="resume-info">
+                <div class="info-item">
+                    <strong>Uploaded:</strong> {{ resume.uploaded_at.strftime('%Y-%m-%d %H:%M') }}
+                </div>
+                <div class="info-item">
+                    <strong>Email:</strong> {{ resume.email or 'Not found' }}
+                </div>
+                <div class="info-item">
+                    <strong>Phone:</strong> {{ resume.phone or 'Not found' }}
+                </div>
+                <div class="info-item">
+                    <strong>Experience:</strong> {{ resume.experience_years }} years
+                </div>
+                <div class="info-item">
+                    <strong>Education:</strong> {{ resume.education }}
+                </div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <span class="score">{{ resume.score }}/100</span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>🔧 Extracted Skills ({{ skills|length }})</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
+                {% if skills %}
+                    {% for skill in skills %}
+                        <span class="skills-tag">{{ skill }}</span>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No skills detected</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if matches %}
+            <div class="card">
+                <h3>🎯 Job Matches ({{ matches|length }})</h3>
+                {% for match in matches %}
+                    <div class="job-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div style="flex: 1;">
+                                <h3>{{ match.job.title }}</h3>
+                                <p class="company">{{ match.job.company }}</p>
+                                <p><strong>Match Score:</strong> 
+                                    <span class="score" style="font-size: 1.5rem;">{{ match.match_score }}%</span>
+                                </p>
+                                
+                                {% set matching = match.matching_skills|from_json %}
+                                {% if matching %}
+                                    <p><strong>Matching Skills:</strong></p>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0;">
+                                        {% for skill in matching %}
+                                            <span class="skills-tag">{{ skill }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                
+                                {% set missing = match.missing_skills|from_json %}
+                                {% if missing %}
+                                    <p><strong>Missing Skills:</strong></p>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0;">
+                                        {% for skill in missing %}
+                                            <span class="badge badge-danger">{{ skill }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <a href="{{ url_for('view_job', job_id=match.job.id) }}" class="btn btn-primary">View Job</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="card">
+                <h3>🎯 Job Matches</h3>
+                <div class="empty-state">
+                    <div>🔍</div>
+                    <p>No job matches yet. Click below to match with available jobs!</p>
+                    <a href="{{ url_for('match_resume', resume_id=resume.id) }}" class="btn btn-success">
+                        Find Matching Jobs
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+        
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <a href="{{ url_for('match_resume', resume_id=resume.id) }}" class="btn btn-success">
+                🔄 Re-match Jobs
+            </a>
+            <form method="POST" action="{{ url_for('delete_resume', resume_id=resume.id) }}" 
+                  onsubmit="return confirm('Delete this resume?');" style="margin: 0;">
+                <button type="submit" class="btn btn-danger">🗑️ Delete Resume</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
