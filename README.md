@@ -1,4 +1,3 @@
-# resume_app
 # 🚀 AI Resume Analyzer & Job Matching System
 
 A comprehensive full-stack web application that uses **Natural Language Processing (NLP)** and **Machine Learning** to analyze resumes, extract information, and match candidates with job opportunities.
